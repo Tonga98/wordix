@@ -341,7 +341,7 @@ function obtenerPuntajeWordix()  /* ****COMPLETAR***** parámetros formales nece
  * Dada una palabra para adivinar, juega una partida de wordix intentando que el usuario adivine la palabra.
  * @param string $palabraWordix
  * @param string $nombreUsuario
- * @return array estructura con el resumen de la partida, para poder ser utilizada en estadísticas.
+ * @return array Estructura con el resumen de la partida, para poder ser utilizada en estadísticas.
  */
 function jugarWordix($palabraWordix, $nombreUsuario)
 {
@@ -370,11 +370,11 @@ function jugarWordix($palabraWordix, $nombreUsuario)
     if ($ganoElIntento) {
         $nroIntento--;
         $puntaje = obtenerPuntajeWordix();
-        echo "Adivinó la palabra Wordix en el intento " . $nroIntento . "!: " . $palabraIntento . " Obtuvo $puntaje puntos!";
+        echo "Adivinó la palabra Wordix en el intento " . $nroIntento . "!: " . $palabraIntento . " Obtuvo $puntaje puntos! \n";
     } else {
         $nroIntento = 0; //reset intento
         $puntaje = 0;
-        echo "Seguí Jugando Wordix, la próxima será! ";
+        echo "Seguí Jugando Wordix, la próxima será! \n";
     }
 
     $partida = [
