@@ -153,14 +153,14 @@ function datosPartida($numPartida, $colPartidas)
     */
 
     /*Asignacion de variables y ejecucion*/
-    $intento = ($colPartidas[$numPartida]["intentos"] != 7) ? "Adivino la palabra en ".$colPartidas[$numPartida]["intentos"]."intentos" : "No adivino la palabra";
+    $intento = ($colPartidas[$numPartida]["intentos"] != 7) ? "Adivino la palabra en ".$colPartidas[$numPartida]["intentos"]." intentos" : "No adivino la palabra";
 
-    echo "****************************************".
+    echo "**************************************** \n".
          "Partida WORDIX ".$numPartida.": palabra ". $colPartidas[$numPartida]["palabraWordix"]."\n".
          "Jugador: ".$colPartidas[$numPartida]["jugador"]."\n".
          "Puntaje: ".$colPartidas[$numPartida]["puntaje"]."\n".
          "Intento: ".$intento."\n".
-         "****************************************";
+         "**************************************** \n";
 }
 
 /**
@@ -201,6 +201,7 @@ function indicePrimerVictoria($colPartidas, $jugador)
             $indiceVictoria = $indice;
             $encontrado = true;
         }
+        $indice++;
     }while(!$encontrado && $indice < $cantPartidas-1);
 
     return $indiceVictoria;
@@ -293,30 +294,84 @@ function sumarPartida($resumen, $partida)
 }
 
 /**
- * Solicitar
- * @return void
+ * Solicita al usuario un nombre y lo retorna en minuscula
+ * @return string
  */
 function solicitarJugador()
 {
+    /*Declaracion de variables
+    * string $jugador
+    */
+
+    /*Asignacion de variables y ejecucion*/
     do {
         echo "Ingrese el nombre del jugador: ";
         $jugador = strtolower(trim(fgets(STDIN)));
-        explode(" ", $jugador);
-    }while(!is_string($jugador[0]));
-
+    }while(!(is_string(substr($jugador,0,1))));
 
     return $jugador;
+}
+
+/**
+ * Muestra por pantalla la coleccion de partidas ordenadas por el nombre del jugador y la palabra de la partida.
+ * @param array $colPartidas
+ * @return void
+ */
+
+function coleccionPartidas($colPartidas)
+{
+    /*Asignacion de variables y ejecucion*/
+    uasort($colPartidas, "ordenarPartidas");
+
+    echo "************PARTIDAS************\n";
+    foreach ($colPartidas as $partida){
+        print_r($partida);
+    }
+
+}
+
+/**
+ * Compara dos partidas lexicograficamente en base al nombre del jugador y palabra jugada, retorna el resultado de la comparacion.
+ * @param array $a Primer partida a comparar.
+ * @param array $b Segunda partida a comparar.
+ * @return int Retorna -1 si la primer partida es menor, 0 si son iguales y 1 si la primer partida es mayor.
+ */
+function ordenarPartidas($a,$b)
+{
+    $jugadorComparar = strcmp($a["jugador"],$b["jugador"]);
+
+    if ($jugadorComparar == 0){
+        $jugadorComparar = strcmp($a["palabraWordix"],$b["palabraWordix"]);
+    }
+
+    return $jugadorComparar;
+}
+
+function datosJugador($datosJugador)
+{
+    echo "Nombre: ".$datosJugador["jugador"]."\n";
+    echo "Partidas: ".$datosJugador["partidas"]."\n";
+    echo "Puntaje: ".$datosJugador["puntaje"]."\n";
+    echo "Victorias: ".$datosJugador["victorias"]."\n";
+    echo "Intento 1: ".$datosJugador["intento1"]."\n";
+    echo "Intento 2: ".$datosJugador["intento2"]."\n";
+    echo "Intento 3: ".$datosJugador["intento3"]."\n";
+    echo "Intento 4: ".$datosJugador["intento4"]."\n";
+    echo "Intento 5: ".$datosJugador["intento5"]."\n";
+    echo "Intento 6: ".$datosJugador["intento6"]."\n";
 }
 
 /**************************************/
 /*********** PROGRAMA PRINCIPAL *******/
 /**************************************/
 
-//Declaración de variables:
+/* Declaración de variables
+ * array $partidasPrecargadas, $palabrasPrecargadas
+ */
 
-
-//Inicialización de variables:
-
+/*Asignación de variables y ejecucion*/
+$partidasPrecargadas = cargarPartidas();
+$palabrasPrecargadas = cargarColeccionPalabras();
 
 //Proceso:
 
@@ -334,15 +389,31 @@ do {
 
             break;
         case 2:
-            //completar qué secuencia de pasos ejecutar si el usuario elige la opción 2
-
+            $palabraAleatoria = $palabrasPrecargadas[rand(0, count($palabrasPrecargadas)-1)];
+            jugarWordix($palabraAleatoria, "Tonga");
             break;
         case 3:
-            //completar qué secuencia de pasos ejecutar si el usuario elige la opción 3
-
+            echo "Ingrese un numero de partida: ";
+            $numeroPartida = trim(fgets(STDIN));
+            datosPartida($numeroPartida, $partidasPrecargadas);
             break;
-
-        //...
+        case 4:
+            $jugador = solicitarJugador();
+            $indice = indicePrimerVictoria($partidasPrecargadas, $jugador);
+            datosPartida($indice, $partidasPrecargadas);
+            break;
+        case 5:
+            $jugador = solicitarJugador();
+            $resumen = resumenJugador($partidasPrecargadas, $jugador);
+            datosJugador($resumen);
+            break;
+        case 6:
+            coleccionPartidas($partidasPrecargadas);
+            break;
+        case 7:
+            $palabraNueva = solicitarPalabra();
+            $palabrasPrecargadas = agregarPalabra($palabrasPrecargadas, $palabraNueva);
+            print_r($palabrasPrecargadas);
     }
 } while ($opcion != 8);
 
