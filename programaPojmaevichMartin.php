@@ -16,9 +16,9 @@ github: github.com/Tonga98
 
 Apellido: Martin
 Nombre: Gaston
-Legajo FAI-
+Legajo FAI- 5674
 Carrera: TDW
-Mail:
+Mail: gastonmtnez@gmail.com
 github: github.com/
 */
 
@@ -28,10 +28,10 @@ github: github.com/
 /**************************************/
 
 /**
- * Obtiene una colección de palabras
+ * Retorna una colección de palabras
  * @return array
  */
-function cargarColeccionPalabras(): array
+function cargarColeccionPalabras()
 {
     $coleccionPalabras = [
         "MUJER", "QUESO", "FUEGO", "CASAS", "RASGO",
@@ -45,10 +45,10 @@ function cargarColeccionPalabras(): array
 }
 
 /**
- * Retorna un array de partidas de ejemplo
+ * Retorna una coleccion de partidas de ejemplo
  * @return array
  */
-function cargarPartidas(): array
+function cargarPartidas()
 {
     /* Declaracion de variables
      * array $partidasPrecargadas */
@@ -83,7 +83,7 @@ function cargarPartidas(): array
  * Muestra un menu por pantalla y solicita al usuario que ingrese un entero para realizar una accion
  * @return int La opcion elegida por el usuario
  */
-function seleccionarOpcion():int
+function seleccionarOpcion()
 {
     /*Declaracion de variables
      * bool $continuar
@@ -119,7 +119,7 @@ function seleccionarOpcion():int
  * Solicita al usuario que ingrese una palabra de 5 letras
  * @return string
  */
-function solicitarPalabra():string
+function solicitarPalabra()
 {
     /*Declaracion de variables
      * string $palabra
@@ -142,12 +142,34 @@ function solicitarPalabra():string
 }
 
 /**
+ * Muestra por pantalla los datos de una partida
+ * @param int $numPartida El numero de partida del cual se mostraran los datos
+ * @param array $colPartidas La coleccion de todas las partidas
+ */
+function datosPartida($numPartida, $colPartidas)
+{
+    /*Declaracion de variables
+    * string $intento
+    */
+
+    /*Asignacion de variables y ejecucion*/
+    $intento = ($colPartidas[$numPartida]["intentos"] != 7) ? "Adivino la palabra en ".$colPartidas[$numPartida]["intentos"]."intentos" : "No adivino la palabra";
+
+    echo "****************************************".
+         "Partida WORDIX ".$numPartida.": palabra ". $colPartidas[$numPartida]["palabraWordix"]."\n".
+         "Jugador: ".$colPartidas[$numPartida]["jugador"]."\n".
+         "Puntaje: ".$colPartidas[$numPartida]["puntaje"]."\n".
+         "Intento: ".$intento."\n".
+         "****************************************";
+}
+
+/**
  * Recibe un array, una palabra y retorna el array con la palabra incluida.
  * @param array $colPalabras Coleccion de palabras de 5 letras.
  * @param string $palabra Palabra que se agregara a la coleccion.
  * @return array
  */
-function agregarPalabra(array $colPalabras, string $palabra):array
+function agregarPalabra($colPalabras, $palabra)
 {
 
     //Ejecucion
@@ -161,7 +183,7 @@ function agregarPalabra(array $colPalabras, string $palabra):array
  * @param string $jugador Nombre del jugador a buscar.
  * @return int Indice de la primer victoria, -1 en caso de no encontrar victoria.
  */
-function indicePrimerVictoria(array $colPartidas, string $jugador): int
+function indicePrimerVictoria($colPartidas, $jugador)
 {
     /*Declaracion de variables
      * int $indiceVictoria, $indice, $cantPartidas
@@ -183,6 +205,109 @@ function indicePrimerVictoria(array $colPartidas, string $jugador): int
 
     return $indiceVictoria;
 }
+
+/**
+ * Retorna el resumen de partidas de un jugador.
+ * @param array $colPartidas Coleccion de partidas del juego.
+ * @param string $jugador Nombre del jugador.
+ * @return array
+ */
+function resumenJugador($colPartidas, $jugador)
+{
+    /*Declaracion de variables
+     * int $cantPartidas, $puntaje, $victorias, $in1, $in2, $in3, $in4, $in5, $in6
+     * float $porcentajeVictorias
+     * array $resumen
+     * */
+
+    /*Asignacion de variables y ejecucion*/
+    $cantPartidas = 0;
+    $puntaje = 0;
+    $victorias = 0;
+    $in1 = 0;
+    $in2 = 0;
+    $in3 = 0;
+    $in4 = 0;
+    $in5 = 0;
+    $in6 = 0;
+    $resumen = [
+        "jugador"=>$jugador,
+        "partidas" => 0,
+        "puntaje" => 0,
+        "victorias" => 0,
+        "intento1" => 0,
+        "intento2" => 0,
+        "intento3" => 0,
+        "intento4" => 0,
+        "intento5" => 0,
+        "intento6" => 0
+    ];
+
+    foreach ($colPartidas as $partida){
+        if ($partida["jugador"] == $jugador) {
+            $cantPartidas++;
+            if ($partida["puntaje"] > 0) {
+                $puntaje += $partida["puntaje"];
+                $victorias++;
+                switch ($partida["intentos"]){
+                    case 1:
+                        $in1++;
+                        break;
+                    case 2:
+                        $in2++;
+                        break;
+                    case 3:
+                        $in3++;
+                        break;
+                    case 4:
+                        $in4++;
+                        break;
+                    case 5:
+                        $in5++;
+                        break;
+                    case 6:
+                        $in6++;
+                        break;
+                }
+            }
+        }
+    }
+    $resumen = [
+        "jugador"=>$jugador,
+        "partidas" => $cantPartidas,
+        "puntaje" => $puntaje,
+        "victorias" => $victorias,
+        "intento1" => $in1,
+        "intento2" => $in2,
+        "intento3" => $in3,
+        "intento4" => $in4,
+        "intento5" => $in5,
+        "intento6" => $in6
+    ];
+    return $resumen;
+}
+
+function sumarPartida($resumen, $partida)
+{
+    return array_push($resumen, $partida);
+}
+
+/**
+ * Solicitar
+ * @return void
+ */
+function solicitarJugador()
+{
+    do {
+        echo "Ingrese el nombre del jugador: ";
+        $jugador = strtolower(trim(fgets(STDIN)));
+        explode(" ", $jugador);
+    }while(!is_string($jugador[0]));
+
+
+    return $jugador;
+}
+
 /**************************************/
 /*********** PROGRAMA PRINCIPAL *******/
 /**************************************/
