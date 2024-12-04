@@ -58,23 +58,23 @@ function cargarPartidas()
         ["palabraWordix" => "MUJER", "jugador" => "juan", "intentos" => 1, "puntaje" => 15],
         ["palabraWordix" => "GATOS", "jugador" => "juan", "intentos" => 6, "puntaje" => 11],
         ["palabraWordix" => "MELON", "jugador" => "juan", "intentos" => 3, "puntaje" => 12],
-        ["palabraWordix" => "PERROS", "jugador" => "juan", "intentos" => 7, "puntaje" => 0],
+        ["palabraWordix" => "PERROS", "jugador" => "juan", "intentos" => 0, "puntaje" => 0],
         ["palabraWordix" => "QUESO", "jugador" => "pedro", "intentos" => 2, "puntaje" => 14],
         ["palabraWordix" => "GOTAS", "jugador" => "pedro", "intentos" => 3, "puntaje" => 14],
         ["palabraWordix" => "YUYOS", "jugador" => "pedro", "intentos" => 1, "puntaje" => 17],
-        ["palabraWordix" => "PATAS", "jugador" => "pedro", "intentos" => 7, "puntaje" => 0],
+        ["palabraWordix" => "PATAS", "jugador" => "pedro", "intentos" => 0, "puntaje" => 0],
         ["palabraWordix" => "FUEGO", "jugador" => "martin", "intentos" => 3, "puntaje" => 11],
         ["palabraWordix" => "HUEVO", "jugador" => "martin", "intentos" => 4, "puntaje" => 11],
         ["palabraWordix" => "PIANO", "jugador" => "martin", "intentos" => 2, "puntaje" => 10],
-        ["palabraWordix" => "LAGOS", "jugador" => "martin", "intentos" => 7, "puntaje" => 0],
+        ["palabraWordix" => "LAGOS", "jugador" => "martin", "intentos" => 0, "puntaje" => 0],
         ["palabraWordix" => "CASAS", "jugador" => "eugenia", "intentos" => 4, "puntaje" => 13],
         ["palabraWordix" => "TINTO", "jugador" => "eugenia", "intentos" => 5, "puntaje" => 12],
         ["palabraWordix" => "PISOS", "jugador" => "eugenia", "intentos" => 1, "puntaje" => 17],
-        ["palabraWordix" => "CONOS", "jugador" => "eugenia", "intentos" => 7, "puntaje" => 0],
+        ["palabraWordix" => "CONOS", "jugador" => "eugenia", "intentos" => 0, "puntaje" => 0],
         ["palabraWordix" => "RASGO", "jugador" => "lucia", "intentos" => 5, "puntaje" => 12],
         ["palabraWordix" => "NAVES", "jugador" => "lucia", "intentos" => 6, "puntaje" => 11],
         ["palabraWordix" => "VERDE", "jugador" => "lucia", "intentos" => 1, "puntaje" => 16],
-        ["palabraWordix" => "SAPOS", "jugador" => "lucia", "intentos" => 7, "puntaje" => 0],
+        ["palabraWordix" => "SAPOS", "jugador" => "lucia", "intentos" => 0, "puntaje" => 0],
     ];
     return $partidasPrecargadas;
 }
@@ -107,38 +107,12 @@ function seleccionarOpcion()
         $opcion = trim(fgets(STDIN));
 
         if (!($opcion >= 1 && $opcion <=8)){
-            echo "\e[1;37;41m Error, por favor seleccione una opcion del 1 al 8 \e[0m  \n";
+            echo "Error, por favor seleccione una opcion del 1 al 8";
             $continuar = true;
         }
     }while($continuar);
 
     return $opcion;
-}
-
-/**
- * Solicita al usuario que ingrese una palabra de 5 letras
- * @return string
- */
-function solicitarPalabra()
-{
-    /*Declaracion de variables
-     * string $palabra
-     * bool $continuar
-    */
-
-    /*Asignacion de variables y ejecucion*/
-    do {
-        $continuar = false;
-        echo "Por favor ingrese una palabara de 5 letras: \n";
-        $palabra = strtoupper(trim(fgets(STDIN)));
-
-        if (strlen($palabra) != 5){
-            echo "\e[1;37;41m Error, la palabra debe tener 5 letras \e[0m \n";
-            $continuar = true;
-        }
-
-        }while($continuar);
-    return $palabra;
 }
 
 /**
@@ -153,10 +127,10 @@ function datosPartida($numPartida, $colPartidas)
     */
 
     /*Asignacion de variables y ejecucion*/
-    $intento = ($colPartidas[$numPartida]["intentos"] != 7) ? "Adivino la palabra en ".$colPartidas[$numPartida]["intentos"]." intentos" : "No adivino la palabra";
+    $intento = ($colPartidas[$numPartida]["intentos"] != 0) ? "Adivino la palabra en ".$colPartidas[$numPartida]["intentos"]." intentos" : "No adivino la palabra";
 
     echo "**************************************** \n".
-         "Partida WORDIX ".$numPartida.": palabra ". $colPartidas[$numPartida]["palabraWordix"]."\n".
+         "Partida WORDIX ".($numPartida+1).": palabra ". $colPartidas[$numPartida]["palabraWordix"]."\n".
          "Jugador: ".$colPartidas[$numPartida]["jugador"]."\n".
          "Puntaje: ".$colPartidas[$numPartida]["puntaje"]."\n".
          "Intento: ".$intento."\n".
@@ -304,11 +278,15 @@ function solicitarJugador()
     */
 
     /*Asignacion de variables y ejecucion*/
-    do {
-        echo "Ingrese el nombre del jugador: ";
-        $jugador = strtolower(trim(fgets(STDIN)));
-    }while(!(is_string(substr($jugador,0,1))));
+    echo "Ingrese el nombre del jugador: ";
+    $jugador = trim(fgets(STDIN));
 
+    while(is_numeric(substr($jugador, 0, 1))){
+        echo "El nombre no puede comenzar con un numero. Ingrese nuevamente el nombre del jugador: ";
+        $jugador = trim(fgets(STDIN));
+    }
+
+    $jugador = strtolower($jugador);
     return $jugador;
 }
 
@@ -347,20 +325,98 @@ function ordenarPartidas($a,$b)
     return $jugadorComparar;
 }
 
+/**
+ * Muestra por pantalla  el resumen de un jugador.
+ * @param array $datosJugador Datos del jugador a mostrar.
+ * @return void
+ */
 function datosJugador($datosJugador)
 {
-    echo "Nombre: ".$datosJugador["jugador"]."\n";
+    /*Declaracion de variables
+     * float $porcentajeVictorias
+     */
+
+    /*Asignacion de variables y ejecucion*/
+    $porcentajeVictorias = ($datosJugador["victorias"]*100)/$datosJugador["partidas"];
+
+    echo "************DATOS DEL JUGADOR************\n";
+    echo "Jugador: ".$datosJugador["jugador"]."\n";
     echo "Partidas: ".$datosJugador["partidas"]."\n";
-    echo "Puntaje: ".$datosJugador["puntaje"]."\n";
+    echo "Puntaje total: ".$datosJugador["puntaje"]."\n";
     echo "Victorias: ".$datosJugador["victorias"]."\n";
-    echo "Intento 1: ".$datosJugador["intento1"]."\n";
-    echo "Intento 2: ".$datosJugador["intento2"]."\n";
-    echo "Intento 3: ".$datosJugador["intento3"]."\n";
-    echo "Intento 4: ".$datosJugador["intento4"]."\n";
-    echo "Intento 5: ".$datosJugador["intento5"]."\n";
-    echo "Intento 6: ".$datosJugador["intento6"]."\n";
+    echo "Porcentaje de victorias: ".$porcentajeVictorias."% \n";
+    echo "Adivinadas:"."\n";
+    echo "      Intento 1: ".$datosJugador["intento1"]."\n";
+    echo "      Intento 2: ".$datosJugador["intento2"]."\n";
+    echo "      Intento 3: ".$datosJugador["intento3"]."\n";
+    echo "      Intento 4: ".$datosJugador["intento4"]."\n";
+    echo "      Intento 5: ".$datosJugador["intento5"]."\n";
+    echo "      Intento 6: ".$datosJugador["intento6"]."\n";
+    echo "*************************************\n";
 }
 
+/**
+ * Verifica si la palabra recibida ya fue jugada por el jugador y retorna un booleano.
+ * @param string $palabra Palabra a verificar.
+ * @param string $jugador Nombre del jugador.
+ * @param array $colPartidas Coleccion de partidas.
+ * @return bool Retrona true si la palabra ya fue jugada, false si no.
+ */
+function palabraYaJugada($palabra, $jugador, $colPartidas)
+{
+    /* Declaracion de variables
+     * bool $yaJugada
+     */
+
+    /*Asignacion de variables y ejecucion*/
+    $yaJugada = false;
+
+    foreach ($colPartidas as $partida){
+        if ($partida["jugador"] == $jugador && $partida["palabraWordix"] == $palabra){
+            $yaJugada = true;
+        }
+    }
+    return $yaJugada;
+}
+
+/**
+ * Verifica si el numero ingresado por el jugador esta dentro del rango de palabras disponibles.
+ * @param int $numPalabra Numero de la palabra a jugar.
+ * @param int $cantPalabras Cantidad de palabras en la coleccion.
+ * @return bool Retorna true si el numero esta dentro del rango, false si no.
+ */
+function verificarNumeroPalabra($numPalabra,$cantPalabras)
+{
+    /* Declaracion de variables
+     * bool $numeroCorrecto
+     */
+    /*Asignacion de variables y ejecucion*/
+    $numeroCorrecto = true;
+    if ($numPalabra > $cantPalabras || $numPalabra < 1 || !is_numeric($numPalabra)){
+        $numeroCorrecto = false;
+    }
+    return $numeroCorrecto;
+}
+
+/**
+ * Verifica si el numero ingresado por el jugador esta dentro del rango de partidas disponibles.
+ * @param int $numeroPartida Numero de la partida a buscar.
+ * @param array $partidasPrecargadas Coleccion de partidas.
+ * @return bool Retorna true si el numero esta dentro del rango, false si no.
+ */
+function verificarNumeroPartida($numeroPartida,$partidasPrecargadas)
+{
+    /* Declaracion de variables
+     * bool $numeroCorrecto
+     */
+
+    /*Asignacion de variables y ejecucion*/
+    $numeroCorrecto = true;
+    if ($numeroPartida > count($partidasPrecargadas) || $numeroPartida < 1 || !is_numeric($numeroPartida)){
+        $numeroCorrecto = false;
+    }
+    return $numeroCorrecto;
+}
 /**************************************/
 /*********** PROGRAMA PRINCIPAL *******/
 /**************************************/
@@ -373,34 +429,60 @@ function datosJugador($datosJugador)
 $partidasPrecargadas = cargarPartidas();
 $palabrasPrecargadas = cargarColeccionPalabras();
 
-//Proceso:
-
-//$partida = jugarWordix("MELON", strtolower("MaJo"));
-//print_r($partida);
-//imprimirResultado($partida);
-
 
 do {
     $opcion = seleccionarOpcion();
 
     switch ($opcion) {
         case 1:
-            jugarWordix("MELON", "Tonga");
+            $jugador = solicitarJugador();
+
+            echo "Ingrese un numero de palabra para jugar: ";
+            $numeroPalabra = trim(fgets(STDIN));
+            $cantPalabras = count($palabrasPrecargadas);
+
+            while (!verificarNumeroPalabra($numeroPalabra, $cantPalabras) || palabraYaJugada($palabrasPrecargadas[$numeroPalabra-1], $jugador, $partidasPrecargadas)){
+                if (!verificarNumeroPalabra($numeroPalabra, $cantPalabras)){
+                    echo "El numero de palabra debe ser un numero menor o igual a ". $cantPalabras ." y mayor a 0, ingrese otro numero: ";
+                }else{
+                    echo "La palabra ya fue jugada, ingrese otro numero: ";
+                }
+                $numeroPalabra = trim(fgets(STDIN));
+            }
+
+            $palabra = $palabrasPrecargadas[$numeroPalabra - 1];
+            $partidasPrecargadas[] = jugarWordix($palabra, $jugador);
 
             break;
         case 2:
+            $jugador = solicitarJugador();
             $palabraAleatoria = $palabrasPrecargadas[rand(0, count($palabrasPrecargadas)-1)];
-            jugarWordix($palabraAleatoria, "Tonga");
+
+            while (palabraYaJugada($palabraAleatoria, $jugador, $partidasPrecargadas)){
+                $palabraAleatoria = $palabrasPrecargadas[rand(0, count($palabrasPrecargadas)-1)];
+            }
+
+            $partidasPrecargadas[] = jugarWordix($palabraAleatoria, $jugador);
             break;
         case 3:
             echo "Ingrese un numero de partida: ";
             $numeroPartida = trim(fgets(STDIN));
-            datosPartida($numeroPartida, $partidasPrecargadas);
+
+            while (!verificarNumeroPartida($numeroPartida, $partidasPrecargadas)){
+                echo "Error, el numero de partida debe ser un numero menor o igual a ". count($partidasPrecargadas) ." y mayor a 0, ingrese otro numero: ";
+                $numeroPartida = trim(fgets(STDIN));
+            }
+
+            datosPartida($numeroPartida-1, $partidasPrecargadas);
             break;
         case 4:
             $jugador = solicitarJugador();
             $indice = indicePrimerVictoria($partidasPrecargadas, $jugador);
-            datosPartida($indice, $partidasPrecargadas);
+            if ($indice == -1){
+                echo "El jugador ". $jugador ." no ha jugado ninguna partida.\n";
+            }else{
+                datosPartida($indice, $partidasPrecargadas);
+            }
             break;
         case 5:
             $jugador = solicitarJugador();
@@ -411,9 +493,10 @@ do {
             coleccionPartidas($partidasPrecargadas);
             break;
         case 7:
-            $palabraNueva = solicitarPalabra();
+            $palabraNueva = leerPalabra5Letras();
             $palabrasPrecargadas = agregarPalabra($palabrasPrecargadas, $palabraNueva);
             print_r($palabrasPrecargadas);
+            break;
     }
 } while ($opcion != 8);
 

@@ -120,7 +120,9 @@ function escribirSegunEstado($texto, $estado)
 }
 
 /**
- * ****COMPLETAR*****
+ * Muestra por pantalla un mensaje de bienvenida.
+ * @param string $usuario Nombre del jugador
+ * @return void
  */
 function escribirMensajeBienvenida($usuario)
 {
@@ -135,39 +137,66 @@ function escribirMensajeBienvenida($usuario)
 /**
  * ****COMPLETAR*****
  */
-function esPalabra($cadena)
-{
-    //int $cantCaracteres, $i, boolean $esLetra
-    $cantCaracteres = strlen($cadena);
-    $esLetra = true;
-    $i = 0;
-    while ($esLetra && $i < $cantCaracteres) {
-        $esLetra =  ctype_alpha($cadena[$i]);
-        $i++;
-    }
-    return $esLetra;
-}
+
+//function esPalabra($cadena)
+//{
+//    //int $cantCaracteres, $i, boolean $esLetra
+//    $cantCaracteres = strlen($cadena);
+//    $esLetra = true;
+//    $i = 0;
+//    while ($esLetra && $i < $cantCaracteres) {
+//        $esLetra =  ctype_alpha($cadena[$i]);
+//        $i++;
+//    }
+//    return $esLetra;
+//}
+//
+///**
+// *  ****COMPLETAR*****
+// */
+//function leerPalabra5Letras()
+//{
+//    //string $palabra
+//    echo "Ingrese una palabra de 5 letras: ";
+//    $palabra = trim(fgets(STDIN));
+//    $palabra  = strtoupper($palabra);
+//
+//    while ((strlen($palabra) != 5) || !esPalabra($palabra)) {
+//        echo "Debe ingresar una palabra de 5 letras:";
+//        $palabra = strtoupper(trim(fgets(STDIN)));
+//    }
+//    return $palabra;
+//}
 
 /**
- *  ****COMPLETAR*****
+ * Solicita al usuario que ingrese una palabra de 5 letras
+ * @return string
  */
 function leerPalabra5Letras()
 {
-    //string $palabra
-    echo "Ingrese una palabra de 5 letras: ";
-    $palabra = trim(fgets(STDIN));
-    $palabra  = strtoupper($palabra);
+    /*Declaracion de variables
+ * string $palabra
+ * bool $continuar
+*/
 
-    while ((strlen($palabra) != 5) || !esPalabra($palabra)) {
-        echo "Debe ingresar una palabra de 5 letras:";
+    /*Asignacion de variables y ejecucion*/
+    do {
+        $continuar = false;
+        echo "Por favor ingrese una palabra de 5 letras: ";
         $palabra = strtoupper(trim(fgets(STDIN)));
-    }
+
+        if (strlen($palabra) != 5 || !ctype_alpha($palabra)){
+            echo "Error, la palabra debe tener 5 letras.";
+            echo "\n";
+            $continuar = true;
+        }
+
+    }while($continuar);
     return $palabra;
 }
 
-
 /**
- * Inicia una estructura de datos Teclado. La estructura es de tipo: ¿Indexado, asociativo o Multidimensional?
+ * Inicia una estructura de datos Teclado. La estructura es de tipo: Asociativo ¿Indexado, asociativo o Multidimensional?
  *@return array
  */
 function iniciarTeclado()
@@ -190,8 +219,11 @@ function iniciarTeclado()
  */
 function escribirTeclado($teclado)
 {
-    //array $ordenTeclado (arreglo indexado con el orden en que se debe escribir el teclado en pantalla)
-    //string $letra, $estado
+    /* Declaracion de variaables
+     * array $ordenTeclado (arreglo indexado con el orden en que se debe escribir el teclado en pantalla)
+     * string $letra, $estado
+    */
+
     $ordenTeclado = [
         "salto",
         "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "salto",
@@ -216,12 +248,12 @@ function escribirTeclado($teclado)
 
 /**
  * Escribe en pantalla los intentos de Wordix para adivinar la palabra
- * @param array $estruturaIntentosWordix
+ * @param array $estructuraIntentosWordix
  */
 function imprimirIntentosWordix($estructuraIntentosWordix)
 {
     $cantIntentosRealizados = count($estructuraIntentosWordix);
-    //$cantIntentosFaltantes = CANT_INTENTOS - $cantIntentosRealizados;
+    $cantIntentosFaltantes = CANT_INTENTOS - $cantIntentosRealizados;
 
     for ($i = 0; $i < $cantIntentosRealizados; $i++) {
         $estructuraIntento = $estructuraIntentosWordix[$i];
@@ -239,7 +271,7 @@ function imprimirIntentosWordix($estructuraIntentosWordix)
         }
         echo "\n";
     }
-    //echo "\n" . "Le quedan " . $cantIntentosFaltantes . " Intentos para adivinar la palabra!";
+    echo "\n" . "Le quedan " . $cantIntentosFaltantes . " intentos para adivinar la palabra!";
 }
 
 /**
@@ -328,13 +360,69 @@ function esIntentoGanado($estructuraPalabraIntento)
 }
 
 /**
- * ****COMPLETAR***** documentación de la intefaz
+ * Calcula y retorna el puntaje de la partida Wordix.
+ * @param string $palabraWordix Palabra a adivinar
+ * @param int $nroIntento Numeros de intentos realizados
+ * @return int
  */
-function obtenerPuntajeWordix()  /* ****COMPLETAR***** parámetros formales necesarios */
+function obtenerPuntajeWordix($palabraWordix, $nroIntento)
 {
+    /*Declaración de variables
+     * int $puntaje
+     */
 
-    /* ****COMPLETAR***** cuerpo de la función*/
-    return 0;
+    /*Asignacion de variables y ejecucion*/
+    $puntaje = 0;
+
+    switch ($nroIntento){
+        case 1:
+            $puntaje = 6 + puntajeLetras($palabraWordix);
+            break;
+        case 2:
+            $puntaje = 5 + puntajeLetras($palabraWordix);
+            break;
+        case 3:
+            $puntaje = 4 + puntajeLetras($palabraWordix);
+            break;
+        case 4:
+            $puntaje = 3 + puntajeLetras($palabraWordix);
+            break;
+        case 5:
+            $puntaje = 2 + puntajeLetras($palabraWordix);
+            break;
+        case 6:
+            $puntaje = 1 + puntajeLetras($palabraWordix);
+            break;
+    }
+    return $puntaje;
+}
+
+/**
+ * Calcula y retorna el puntaje de las letras de la palabra a adivinar.
+ * @param string $palabraWordix Palabra a adivinar.
+ * @return int
+ */
+function puntajeLetras($palabraWordix)
+{
+    /*Declaracion de variables
+     * int $puntaje, $cantLetras
+     * string $letra
+     */
+
+    /*Asignacion de variables y ejecucion*/
+    $puntaje = 0;
+    $cantLetras = strlen($palabraWordix);
+    for ($i = 0; $i < $cantLetras; $i++) {
+        $letra = substr($palabraWordix, $i, 1);
+        if ($letra == "A" || $letra == "E" || $letra == "I" || $letra == "O" || $letra == "U") {
+            $puntaje += 1;
+        } elseif($letra <= "M") {
+            $puntaje += 2;
+        }else{
+            $puntaje += 3;
+        }
+    }
+    return $puntaje;
 }
 
 /**
@@ -360,7 +448,7 @@ function jugarWordix($palabraWordix, $nombreUsuario)
         /*Mostrar los resultados del análisis: */
         imprimirIntentosWordix($arregloDeIntentosWordix);
         escribirTeclado($teclado);
-        /*Determinar si la plabra intento ganó e incrementar la cantidad de intentos */
+        /*Determinar si la palabra intento ganó e incrementar la cantidad de intentos */
 
         $ganoElIntento = esIntentoGanado($arregloDeIntentosWordix[$indiceIntento]);
         $nroIntento++;
@@ -369,8 +457,8 @@ function jugarWordix($palabraWordix, $nombreUsuario)
 
     if ($ganoElIntento) {
         $nroIntento--;
-        $puntaje = obtenerPuntajeWordix();
-        echo "Adivinó la palabra Wordix en el intento " . $nroIntento . "!: " . $palabraIntento . " Obtuvo $puntaje puntos! \n";
+        $puntaje = obtenerPuntajeWordix($palabraWordix, $nroIntento);
+        echo "Adivinó la palabra Wordix en el intento " . $nroIntento . "!: " . $nombreUsuario . " obtuvo ". $puntaje ." puntos! \n";
     } else {
         $nroIntento = 0; //reset intento
         $puntaje = 0;
