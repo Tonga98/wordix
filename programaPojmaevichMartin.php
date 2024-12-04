@@ -107,7 +107,7 @@ function seleccionarOpcion()
         $opcion = trim(fgets(STDIN));
 
         if (!($opcion >= 1 && $opcion <=8)){
-            echo "Error, por favor seleccione una opcion del 1 al 8";
+            echo "Error, por favor seleccione una opcion del 1 al 8. \n";
             $continuar = true;
         }
     }while($continuar);
@@ -145,7 +145,6 @@ function datosPartida($numPartida, $colPartidas)
  */
 function agregarPalabra($colPalabras, $palabra)
 {
-
     //Ejecucion
     $colPalabras[] = $palabra;
     return $colPalabras;
@@ -205,18 +204,7 @@ function resumenJugador($colPartidas, $jugador)
     $in4 = 0;
     $in5 = 0;
     $in6 = 0;
-    $resumen = [
-        "jugador"=>$jugador,
-        "partidas" => 0,
-        "puntaje" => 0,
-        "victorias" => 0,
-        "intento1" => 0,
-        "intento2" => 0,
-        "intento3" => 0,
-        "intento4" => 0,
-        "intento5" => 0,
-        "intento6" => 0
-    ];
+    $resumen = [];
 
     foreach ($colPartidas as $partida){
         if ($partida["jugador"] == $jugador) {
@@ -262,11 +250,6 @@ function resumenJugador($colPartidas, $jugador)
     return $resumen;
 }
 
-function sumarPartida($resumen, $partida)
-{
-    return array_push($resumen, $partida);
-}
-
 /**
  * Solicita al usuario un nombre y lo retorna en minuscula
  * @return string
@@ -291,13 +274,13 @@ function solicitarJugador()
 }
 
 /**
- * Muestra por pantalla la coleccion de partidas ordenadas por el nombre del jugador y la palabra de la partida.
- * @param array $colPartidas
+ * Muestra por pantalla la coleccion de partidas ordenadas lexicograficamente por el nombre del jugador y la palabra de la partida.
+ * @param array $colPartidas Coleccion de partidas del juego.
  * @return void
  */
 
-function coleccionPartidas($colPartidas)
-{
+function coleccionPartidas($colPartidas){                        //print_r() muestra información sobre una variable en una forma que es legible por humanos.
+                                                                 //uasort() Ordena un array mediante una función de comparación definida por el usuario y mantiene la asociación de índices.
     /*Asignacion de variables y ejecucion*/
     uasort($colPartidas, "ordenarPartidas");
 
@@ -316,6 +299,11 @@ function coleccionPartidas($colPartidas)
  */
 function ordenarPartidas($a,$b)
 {
+    /*Declaracion de variables
+     * string $jugadorComparar
+     */
+
+    /*Asignacion de variables y ejecucion*/
     $jugadorComparar = strcmp($a["jugador"],$b["jugador"]);
 
     if ($jugadorComparar == 0){
@@ -337,26 +325,31 @@ function datosJugador($datosJugador)
      */
 
     /*Asignacion de variables y ejecucion*/
-    $porcentajeVictorias = ($datosJugador["victorias"]*100)/$datosJugador["partidas"];
-
+    echo "\n";
     echo "************DATOS DEL JUGADOR************\n";
-    echo "Jugador: ".$datosJugador["jugador"]."\n";
-    echo "Partidas: ".$datosJugador["partidas"]."\n";
-    echo "Puntaje total: ".$datosJugador["puntaje"]."\n";
-    echo "Victorias: ".$datosJugador["victorias"]."\n";
-    echo "Porcentaje de victorias: ".$porcentajeVictorias."% \n";
-    echo "Adivinadas:"."\n";
-    echo "      Intento 1: ".$datosJugador["intento1"]."\n";
-    echo "      Intento 2: ".$datosJugador["intento2"]."\n";
-    echo "      Intento 3: ".$datosJugador["intento3"]."\n";
-    echo "      Intento 4: ".$datosJugador["intento4"]."\n";
-    echo "      Intento 5: ".$datosJugador["intento5"]."\n";
-    echo "      Intento 6: ".$datosJugador["intento6"]."\n";
-    echo "*************************************\n";
+    if($datosJugador["partidas"] != 0) {
+        $porcentajeVictorias = ($datosJugador["victorias"]*100)/$datosJugador["partidas"];
+        echo "Jugador: " . $datosJugador["jugador"] . "\n";
+        echo "Partidas: " . $datosJugador["partidas"] . "\n";
+        echo "Puntaje total: " . $datosJugador["puntaje"] . "\n";
+        echo "Victorias: " . $datosJugador["victorias"] . "\n";
+        echo "Porcentaje de victorias: " . $porcentajeVictorias . "% \n";
+        echo "Adivinadas:" . "\n";
+        echo "      Intento 1: " . $datosJugador["intento1"] . "\n";
+        echo "      Intento 2: " . $datosJugador["intento2"] . "\n";
+        echo "      Intento 3: " . $datosJugador["intento3"] . "\n";
+        echo "      Intento 4: " . $datosJugador["intento4"] . "\n";
+        echo "      Intento 5: " . $datosJugador["intento5"] . "\n";
+        echo "      Intento 6: " . $datosJugador["intento6"] . "\n";
+        echo "*****************************************\n";
+    }else{
+        echo "    No existe el jugador ingresado. \n";
+    }
+    echo "\n";
 }
 
 /**
- * Verifica si la palabra recibida ya fue jugada por el jugador y retorna un booleano.
+ * Verifica si la palabra recibida ya fue jugada por el jugador.
  * @param string $palabra Palabra a verificar.
  * @param string $jugador Nombre del jugador.
  * @param array $colPartidas Coleccion de partidas.
@@ -380,49 +373,40 @@ function palabraYaJugada($palabra, $jugador, $colPartidas)
 }
 
 /**
- * Verifica si el numero ingresado por el jugador esta dentro del rango de palabras disponibles.
- * @param int $numPalabra Numero de la palabra a jugar.
- * @param int $cantPalabras Cantidad de palabras en la coleccion.
- * @return bool Retorna true si el numero esta dentro del rango, false si no.
+ * Determina si la palabra recibida ya se encuentra en la coleccion de palabras.
+ * @param string $palabraNueva Palabra a verificar.
+ * @param array $colPalabras Coleccion de palabras.
+ * @return bool Retorna true si la palabra ya estaba incluida, false si no.
  */
-function verificarNumeroPalabra($numPalabra,$cantPalabras)
+function palabraIncluida($palabraNueva, $colPalabras)
 {
     /* Declaracion de variables
-     * bool $numeroCorrecto
-     */
-    /*Asignacion de variables y ejecucion*/
-    $numeroCorrecto = true;
-    if ($numPalabra > $cantPalabras || $numPalabra < 1 || !is_numeric($numPalabra)){
-        $numeroCorrecto = false;
-    }
-    return $numeroCorrecto;
-}
-
-/**
- * Verifica si el numero ingresado por el jugador esta dentro del rango de partidas disponibles.
- * @param int $numeroPartida Numero de la partida a buscar.
- * @param array $partidasPrecargadas Coleccion de partidas.
- * @return bool Retorna true si el numero esta dentro del rango, false si no.
- */
-function verificarNumeroPartida($numeroPartida,$partidasPrecargadas)
-{
-    /* Declaracion de variables
-     * bool $numeroCorrecto
+     * bool $enncontrada
+     * int $cantPalabras, $i
      */
 
     /*Asignacion de variables y ejecucion*/
-    $numeroCorrecto = true;
-    if ($numeroPartida > count($partidasPrecargadas) || $numeroPartida < 1 || !is_numeric($numeroPartida)){
-        $numeroCorrecto = false;
+    $cantPalabras = count($colPalabras);
+    $i=0;
+    $encontrada = false;
+
+    while($i < $cantPalabras && !$encontrada){
+        if ($palabraNueva == $colPalabras[$i]){
+            $encontrada = true;
+        }
+        $i++;
     }
-    return $numeroCorrecto;
+    return $encontrada;
 }
+
 /**************************************/
 /*********** PROGRAMA PRINCIPAL *******/
 /**************************************/
 
 /* Declaración de variables
- * array $partidasPrecargadas, $palabrasPrecargadas
+ * array $partidasPrecargadas, $palabrasPrecargadas, $resumen
+ * int $opcion, $cantPalabras, $numeroPalabra, $palabraAleatoria, $cantPartidas, $numPartida, $indice
+ * string $jugador, $palabraNueva
  */
 
 /*Asignación de variables y ejecucion*/
@@ -436,22 +420,18 @@ do {
     switch ($opcion) {
         case 1:
             $jugador = solicitarJugador();
-
-            echo "Ingrese un numero de palabra para jugar: ";
-            $numeroPalabra = trim(fgets(STDIN));
             $cantPalabras = count($palabrasPrecargadas);
 
-            while (!verificarNumeroPalabra($numeroPalabra, $cantPalabras) || palabraYaJugada($palabrasPrecargadas[$numeroPalabra-1], $jugador, $partidasPrecargadas)){
-                if (!verificarNumeroPalabra($numeroPalabra, $cantPalabras)){
-                    echo "El numero de palabra debe ser un numero menor o igual a ". $cantPalabras ." y mayor a 0, ingrese otro numero: ";
-                }else{
-                    echo "La palabra ya fue jugada, ingrese otro numero: ";
-                }
-                $numeroPalabra = trim(fgets(STDIN));
+            echo "Ingrese un numero de palabra para jugar (min:1, max:".$cantPalabras."): ";
+            $numeroPalabra = solicitarNumeroEntre(1,$cantPalabras);
+
+            while (palabraYaJugada($palabrasPrecargadas[$numeroPalabra-1], $jugador, $partidasPrecargadas)){
+                echo "La palabra ya fue jugada, ingrese otro numero (min:1, max:".$cantPalabras."): ";
+                $numeroPalabra = solicitarNumeroEntre(1,$cantPalabras);
             }
 
-            $palabra = $palabrasPrecargadas[$numeroPalabra - 1];
-            $partidasPrecargadas[] = jugarWordix($palabra, $jugador);
+            $palabraNueva = $palabrasPrecargadas[$numeroPalabra - 1];
+            $partidasPrecargadas[] = jugarWordix($palabraNueva, $jugador);
 
             break;
         case 2:
@@ -465,13 +445,9 @@ do {
             $partidasPrecargadas[] = jugarWordix($palabraAleatoria, $jugador);
             break;
         case 3:
-            echo "Ingrese un numero de partida: ";
-            $numeroPartida = trim(fgets(STDIN));
-
-            while (!verificarNumeroPartida($numeroPartida, $partidasPrecargadas)){
-                echo "Error, el numero de partida debe ser un numero menor o igual a ". count($partidasPrecargadas) ." y mayor a 0, ingrese otro numero: ";
-                $numeroPartida = trim(fgets(STDIN));
-            }
+            $cantPartidas = count($partidasPrecargadas);
+            echo "Ingrese un numero de partida (min:1, max:".$cantPartidas."): ";
+            $numeroPartida = solicitarNumeroEntre(1,$cantPartidas);
 
             datosPartida($numeroPartida-1, $partidasPrecargadas);
             break;
@@ -479,7 +455,7 @@ do {
             $jugador = solicitarJugador();
             $indice = indicePrimerVictoria($partidasPrecargadas, $jugador);
             if ($indice == -1){
-                echo "El jugador ". $jugador ." no ha jugado ninguna partida.\n";
+                echo "El jugador ". $jugador ." no gano ninguna partida.\n";
             }else{
                 datosPartida($indice, $partidasPrecargadas);
             }
@@ -494,8 +470,13 @@ do {
             break;
         case 7:
             $palabraNueva = leerPalabra5Letras();
-            $palabrasPrecargadas = agregarPalabra($palabrasPrecargadas, $palabraNueva);
-            print_r($palabrasPrecargadas);
+
+            if (palabraIncluida($palabraNueva, $palabrasPrecargadas)){
+                echo "Error, la palabra ya se encuentra incluida. \n";
+            }else {
+                $palabrasPrecargadas = agregarPalabra($palabrasPrecargadas, $palabraNueva);
+                echo "Palabra agregada correctamente! \n";
+            }
             break;
     }
 } while ($opcion != 8);

@@ -27,16 +27,23 @@ const ESTADO_LETRA_PERTENECE = "pertenece";
 /**************************************/
 
 /**
- *  ****COMPLETAR*****
+ * Solicita al usuario que ingrese un número entre dos valores.
+ * @param int $min El valor mínimo permitido
+ * @param int $max El valor máximo permitido
+ * @return int El número ingresado por el usuario ya validado
  */
 function solicitarNumeroEntre($min, $max)
 {
-    //int $numero
 
+    /* Declaración de variables
+     * int $numero
+     */
+
+    /*Asignacion de variables y ejecucion*/
     $numero = trim(fgets(STDIN));
 
-    if (is_numeric($numero)) { //determina si un string es un número. puede ser float como entero.
-        $numero  = $numero * 1; //con esta operación convierto el string en número.
+    if (is_numeric($numero)) {
+        $numero  = $numero * 1;
     }
     while (!(is_numeric($numero) && (($numero == (int)$numero) && ($numero >= $min && $numero <= $max)))) {
         echo "Debe ingresar un número entre " . $min . " y " . $max . ": ";
@@ -169,15 +176,15 @@ function escribirMensajeBienvenida($usuario)
 //}
 
 /**
- * Solicita al usuario que ingrese una palabra de 5 letras
+ * Solicita al usuario que ingrese una palabra de 5 letras y  la valida.
  * @return string
  */
 function leerPalabra5Letras()
 {
-    /*Declaracion de variables
- * string $palabra
- * bool $continuar
-*/
+    /* Declaracion de variables
+     * string $palabra
+     * bool $continuar
+     */
 
     /*Asignacion de variables y ejecucion*/
     do {
@@ -186,8 +193,7 @@ function leerPalabra5Letras()
         $palabra = strtoupper(trim(fgets(STDIN)));
 
         if (strlen($palabra) != 5 || !ctype_alpha($palabra)){
-            echo "Error, la palabra debe tener 5 letras.";
-            echo "\n";
+            echo "Error, la palabra debe tener 5 letras. \n";
             $continuar = true;
         }
 
@@ -196,7 +202,7 @@ function leerPalabra5Letras()
 }
 
 /**
- * Inicia una estructura de datos Teclado. La estructura es de tipo: Asociativo ¿Indexado, asociativo o Multidimensional?
+ * Inicia una estructura de datos Teclado. La estructura es de tipo: Asociativo
  *@return array
  */
 function iniciarTeclado()
