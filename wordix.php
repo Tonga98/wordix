@@ -177,7 +177,7 @@ function escribirMensajeBienvenida($usuario)
 
 /**
  * Solicita al usuario que ingrese una palabra de 5 letras y  la valida.
- * @return string
+ * @return string La palabra ingresada por el usuario ya validada.
  */
 function leerPalabra5Letras()
 {
