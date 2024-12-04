@@ -175,7 +175,7 @@ function indicePrimerVictoria($colPartidas, $jugador)
             $encontrado = true;
         }
         $indice++;
-    }while(!$encontrado && $indice < $cantPartidas-1);
+    }while(!$encontrado && $indice < $cantPartidas);
 
     return $indiceVictoria;
 }
@@ -410,8 +410,8 @@ function palabraIncluida($palabraNueva, $colPalabras)
  */
 
 /*Asignación de variables y ejecucion*/
-$partidasPrecargadas = cargarPartidas();
-$palabrasPrecargadas = cargarColeccionPalabras();
+$totalPartidas = cargarPartidas();
+$totalPalabras = cargarColeccionPalabras();
 
 
 do {
@@ -420,61 +420,61 @@ do {
     switch ($opcion) {
         case 1:
             $jugador = solicitarJugador();
-            $cantPalabras = count($palabrasPrecargadas);
+            $cantPalabras = count($totalPalabras);
 
             echo "Ingrese un numero de palabra para jugar (min:1, max:".$cantPalabras."): ";
             $numeroPalabra = solicitarNumeroEntre(1,$cantPalabras);
 
-            while (palabraYaJugada($palabrasPrecargadas[$numeroPalabra-1], $jugador, $partidasPrecargadas)){
+            while (palabraYaJugada($totalPalabras[$numeroPalabra-1], $jugador, $totalPartidas)){
                 echo "La palabra ya fue jugada, ingrese otro numero (min:1, max:".$cantPalabras."): ";
                 $numeroPalabra = solicitarNumeroEntre(1,$cantPalabras);
             }
 
-            $palabraNueva = $palabrasPrecargadas[$numeroPalabra - 1];
-            $partidasPrecargadas[] = jugarWordix($palabraNueva, $jugador);
+            $palabraNueva = $totalPalabras[$numeroPalabra - 1];
+            $totalPartidas[] = jugarWordix($palabraNueva, $jugador);
 
             break;
         case 2:
             $jugador = solicitarJugador();
-            $palabraAleatoria = $palabrasPrecargadas[rand(0, count($palabrasPrecargadas)-1)];
+            $palabraAleatoria = $totalPalabras[rand(0, count($totalPalabras)-1)];
 
-            while (palabraYaJugada($palabraAleatoria, $jugador, $partidasPrecargadas)){
-                $palabraAleatoria = $palabrasPrecargadas[rand(0, count($palabrasPrecargadas)-1)];
+            while (palabraYaJugada($palabraAleatoria, $jugador, $totalPartidas)){
+                $palabraAleatoria = $totalPalabras[rand(0, count($totalPalabras)-1)];
             }
 
-            $partidasPrecargadas[] = jugarWordix($palabraAleatoria, $jugador);
+            $totalPartidas[] = jugarWordix($palabraAleatoria, $jugador);
             break;
         case 3:
-            $cantPartidas = count($partidasPrecargadas);
+            $cantPartidas = count($totalPartidas);
             echo "Ingrese un numero de partida (min:1, max:".$cantPartidas."): ";
             $numeroPartida = solicitarNumeroEntre(1,$cantPartidas);
 
-            datosPartida($numeroPartida-1, $partidasPrecargadas);
+            datosPartida($numeroPartida-1, $totalPartidas);
             break;
         case 4:
             $jugador = solicitarJugador();
-            $indice = indicePrimerVictoria($partidasPrecargadas, $jugador);
+            $indice = indicePrimerVictoria($totalPartidas, $jugador);
             if ($indice == -1){
                 echo "El jugador ". $jugador ." no gano ninguna partida.\n";
             }else{
-                datosPartida($indice, $partidasPrecargadas);
+                datosPartida($indice, $totalPartidas);
             }
             break;
         case 5:
             $jugador = solicitarJugador();
-            $resumen = resumenJugador($partidasPrecargadas, $jugador);
+            $resumen = resumenJugador($totalPartidas, $jugador);
             datosJugador($resumen);
             break;
         case 6:
-            coleccionPartidas($partidasPrecargadas);
+            coleccionPartidas($totalPartidas);
             break;
         case 7:
             $palabraNueva = leerPalabra5Letras();
 
-            if (palabraIncluida($palabraNueva, $palabrasPrecargadas)){
+            if (palabraIncluida($palabraNueva, $totalPalabras)){
                 echo "Error, la palabra ya se encuentra incluida. \n";
             }else {
-                $palabrasPrecargadas = agregarPalabra($palabrasPrecargadas, $palabraNueva);
+                $totalPalabras = agregarPalabra($totalPalabras, $palabraNueva);
                 echo "Palabra agregada correctamente! \n";
             }
             break;
